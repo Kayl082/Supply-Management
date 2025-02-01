@@ -1,0 +1,58 @@
+.csscontainer1{
+    display: flex;
+    width: 70%;
+    flex-direction: column;
+}
+
+#csssearchbar{
+    display: flex;
+    width: 100%;
+    padding-top: 20px;
+    flex-direction: row-reverse;
+}
+
+#csssearch{
+    width: 270px;
+    
+}
+
+#cssfiltericon{
+    color:  #094067;
+    background-color: none;
+}
+
+
+#cssfilter{
+    background-color: #f8f9fa;
+    padding: 0;
+    border: none;
+}
+
+#csssearchicon{
+    color: #094067;
+}
+
+#csssearchbutton{
+    padding: 0;
+}
+
+.cssbuttons{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cssbutton{
+    margin-right: 10px;
+    background-color: #094067;
+    border-radius: 15px;
+    border: none;
+    font-family: sans-serif;
+    font-size:small;
+}
+
+.input-group-text{
+    padding: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+

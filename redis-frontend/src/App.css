@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 .App {
   text-align: center;
 }
-
+ /*
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -36,3 +38,45 @@
     transform: rotate(360deg);
   }
 }
+*/
+
+.cssheader{
+  display: flex;
+  padding-top: 30px;
+  width: auto;
+  align-items: center;
+}
+
+#cssmenuicon{
+  display: flex;
+  width: 100px;
+  justify-content: center;
+}
+
+.csstitle{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  font-family: "Montserrat", serif;
+  font-weight: 900;
+  color: #094067;
+}
+
+#cssmenu{
+  background-color: #fffffe;
+  border: none;
+}
+
+ #csslist{
+  color: #094067;
+  
+ }
+
+ .csscontent{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+ }
+
+
+
