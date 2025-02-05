@@ -1,0 +1,36 @@
+.csscontainer{
+    display: flex;
+    width: 70%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px
+}
+
+.cssbox1{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    padding-left: 100px;
+    padding-right: 100px;
+    box-shadow: 0px 0px 5px 1px rgba(9,64,103,0.76);
+    border-radius: 5px;
+}
+
+#emailHelp{
+    padding-bottom: 15px;
+}
+
+.cssloginbutton{
+    display: flex;
+    justify-content: center;
+}
+
+#cssloginbutton{
+    background-color: #094067;
+    border-color: none;
+    border-radius: 15px;
+    color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+}

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
 import ShowItems from './content/ShowItems.js'
+import Signin from './content/signin.js';
 
 function App(){
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     return(
         <div className="cssmain-container">
             <div className="cssheader">
@@ -26,7 +29,9 @@ function App(){
 
 
             <div className='csscontent'>
-            <ShowItems />
+                {isLoggedIn ? <ShowItems /> : <Signin onLogin={() => setIsLoggedIn(true)} />}
+                {/*<Signin/>
+                <ShowItems />*/}
             </div>
         </div>
     );

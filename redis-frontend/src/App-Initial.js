@@ -11,7 +11,7 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
 
   // Fetch all students
-  const fetchStudents = async () => {
+  const fetchStudents = async () => { 
     try {
       const response = await axios.get(API_URL);
       setStudents(response.data);

@@ -13,6 +13,7 @@
 
 #csssearch{
     width: 270px;
+    border: #094067 solid 1px;
     
 }
 
@@ -48,6 +49,14 @@
     border: none;
     font-family: sans-serif;
     font-size:small;
+}
+
+.cssdelete{
+    background-color: #670927;
+}
+
+.cssdelete:hover{
+    background-color: #400518;
 }
 
 .input-group-text{
