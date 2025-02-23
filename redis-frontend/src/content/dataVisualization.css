@@ -1,0 +1,64 @@
+#cssgrid{
+    display: flex;
+    flex-direction: row;
+}
+
+.csscardtitle{
+    color: #094067;
+    font-size: large;
+}
+
+.text-xl{
+    margin: 0;
+}
+
+.cssviewmore{
+    color: #094067;
+    font-size: small;
+    display: flex;
+    flex-direction: row-reverse;
+    cursor: pointer;
+}
+
+.cssviewmore:hover{
+    color: #699fc5;
+}
+
+.csscharts{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.csschartcontainer {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center horizontally */
+    text-align: center; /* Ensure text is centered */
+    border-bottom: #094067 solid 1px;
+    border-radius: 10px;
+    width: 600px;
+}
+
+
+
+.csscharttitle{
+    display: flex;
+    justify-content: center;
+    font-size: large;
+    color: #094067;
+    padding: 30px;
+    padding-bottom: 0;
+}
+
+.tableheader{
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 100; /* Increase this value */
+}
+
+.tablebody tr {
+    height: 50px; /* Adjust row height if needed */
+}
+

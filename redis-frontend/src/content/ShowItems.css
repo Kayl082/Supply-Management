@@ -39,7 +39,15 @@
 
 .cssbuttons{
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+}
+
+.cssaddbuttons {
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    padding-right: 50px;
+    margin-bottom: 10px;
 }
 
 .cssbutton{
@@ -64,4 +72,22 @@
     padding-left: 8px;
     padding-right: 8px;
 }
+
+.csstablehead{
+    position: fixed;
+}
+
+.cssmodalform{
+    z-index: 1000 !important;
+}
+
+.tableheader{
+    top: 0;
+    background: white;
+}
+
+.tablebody tr {
+    height: 50px; /* Adjust row height if needed */
+}
+
 

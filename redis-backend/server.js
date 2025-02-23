@@ -1,5 +1,6 @@
 const express = require('express');
 const redis = require('redis');
+const bcrypt = require("bcrypt");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
@@ -20,6 +21,35 @@ client.connect()
   .then(() => console.log('Connected to Redis'))
   .catch(err => console.error('Redis connection error:', err));
 
+
+// LOGIN
+
+// Function to authenticate user
+async function authenticateUser(email, password) {
+  const storedPassword = await client.hGet(`user:${email}`, "password");
+  if (!storedPassword) return false; // User not found
+
+  return bcrypt.compare(password, storedPassword); // Compare hashed password
+}
+
+// Login Route
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  
+  if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  const isValid = await authenticateUser(email, password);
+  if (isValid) {
+      res.json({ success: true, message: "Login successful" });
+  } else {
+      res.status(401).json({ success: false, message: "Invalid credentials" });
+  }
+});
+
+
+
 // CRUD Operations
 
 // Route to save item data
@@ -32,24 +62,80 @@ app.post('/items', async (req, res) => {
   }
 
   try {
-    // Set item data in Redis (using object syntax for Redis v4??? and above)
-    const itemData = { item_code, name, category, unit, quantity, date_received, expiration_date, supplier };
+    // Check if the item already exists in Redis
+    const exists = await client.exists(`item:${id}`);
+    console.log(`item:${id}`);
 
-    // Save item data in Redis hash
-    await client.hSet(`item:${id}`, 'item_code', itemData.item_code);
-    await client.hSet(`item:${id}`, 'name', itemData.name);
-    await client.hSet(`item:${id}`, 'category', itemData.category);
-    await client.hSet(`item:${id}`, 'unit', itemData.unit);
-    await client.hSet(`item:${id}`, 'quantity', itemData.quantity);
-    await client.hSet(`item:${id}`, 'date_received', itemData.date_received);
-    await client.hSet(`item:${id}`, 'expiration_date', itemData.expiration_date);
-    await client.hSet(`item:${id}`, 'supplier', itemData.supplier);
+    if (exists) {
+      console.log(`Skipping Item ID: ${item.id}, already exists.`);
+      return res.status(409).json({ message: `Skipping Item ID: ${id}, already exists.` }); // Send a 409 Conflict response
 
-    // Respond with success message
-    res.status(201).json({ message: 'Item saved successfully' });
+    }else{
+      // Set item data in Redis (using object syntax for Redis v4??? and above)
+      const itemData = { item_code, name, category, unit, quantity, date_received, expiration_date, supplier };
+
+      // Save item data in Redis hash
+      await client.hSet(`item:${id}`, 'item_code', itemData.item_code);
+      await client.hSet(`item:${id}`, 'name', itemData.name);
+      await client.hSet(`item:${id}`, 'category', itemData.category);
+      await client.hSet(`item:${id}`, 'unit', itemData.unit);
+      await client.hSet(`item:${id}`, 'quantity', itemData.quantity);
+      await client.hSet(`item:${id}`, 'date_received', itemData.date_received);
+      await client.hSet(`item:${id}`, 'expiration_date', itemData.expiration_date);
+      await client.hSet(`item:${id}`, 'supplier', itemData.supplier);
+
+      // Respond with success message
+      res.status(201).json({ message: 'Item saved successfully' });
+      }
   } catch (error) {
     console.error('Error saving item:', error);
     res.status(500).json({ message: 'Failed to save item' });
+  }
+});
+
+app.post("/upload-csv", async (req, res) => {
+  const { items } = req.body;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: "Invalid CSV data" });
+  }
+
+  try {
+    const skipped_items = [];
+
+    for (const item of items) {
+      const redisKey = `item:${item.id}`;
+
+      // Check if the item already exists in Redis
+      const exists = await client.exists(redisKey);
+
+      if (exists) {
+        console.log(`Skipping Item ID: ${item.id}, already exists.`);
+        skipped_items.push(`${item.id}`)
+        continue; // Skip saving this item
+      }
+
+      // Store in Redis
+      await client.hSet(redisKey, 'item_code', item.item_code);
+      await client.hSet(redisKey, 'name', item.name);
+      await client.hSet(redisKey, 'category', item.category);
+      await client.hSet(redisKey, 'unit', item.unit);
+      await client.hSet(redisKey, 'quantity', item.quantity);
+      await client.hSet(redisKey, 'date_received', item.date_received);
+      await client.hSet(redisKey, 'expiration_date', item.expiration_date);
+      await client.hSet(redisKey, 'supplier', item.supplier);
+
+      console.log(`Saved new item: ${redisKey}`);
+    }
+
+    if (skipped_items.length > 0) {
+      return res.status(409).json({ message: skipped_items }); // Send 409 if there are skipped items
+    }
+
+    res.status(201).json({ message: "CSV data uploaded successfully" });
+  } catch (error) {
+    console.error("Error saving CSV data:", error);
+    res.status(500).json({ message: "Failed to process CSV data" });
   }
 });
 
@@ -112,31 +198,6 @@ app.delete('/items/:id', async (req, res) => {
   res.status(200).json({ message: 'Item deleted successfully' });
 });
 
-
-// Search
-app.get('/search', async (req, res) => {
-  const { query } = req.query; // Get the search query from the request
-  const cursor = '0';  // Start with the initial cursor position
-  let items = [];
-  
-  // Use SCAN to iterate through all item keys
-  let scanResult = await client.scan(cursor, { MATCH: 'item:*' });
-  let keys = scanResult[1];
-
-  // Loop through the keys and get their values
-  for (let key of keys) {
-    const item = await client.hGetAll(key);
-    if (item.name && item.name.includes(query)) { // Search by the 'name' field
-      items.push(item);
-    }
-  }
-
-  if (items.length === 0) {
-    return res.status(404).json({ message: 'No items found' });
-  }
-
-  res.json(items);
-});
 
 // Start server
 app.listen(PORT, () => {
